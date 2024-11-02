@@ -8,7 +8,7 @@
     </div>
 
     <div class="container">
-        <form action="/books/edit/<%- book.id %>" method="POST">
+        <form action="/books/api/edit/<%- book.id %>" method="POST">
             <label for="title" class="form-label">Название книги</label>
             <input type="text" class="form-control" name="title" id="title" aria-describedby="title" value="<%- book.title %>">
 

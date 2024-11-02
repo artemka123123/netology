@@ -9,9 +9,9 @@
         <p class="card-text fw-light"><%- book.authors %></p>
 
         <div class="container d-flex justify-content-center gap-5">
-            <a href="/books/download/<%- book.id %>" class="btn btn-primary">Скачать</a>
+            <a href="/books/api/download/<%- book.id %>" class="btn btn-primary">Скачать</a>
 
-            <form action="/books/delete/<%- book.id %>" method="post">
+            <form action="/books/api/delete/<%- book.id %>" method="post">
                 <button type="submit" class="btn btn-danger">Удалить</a>    
             </form>    
         </div>
