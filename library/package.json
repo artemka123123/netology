@@ -1,9 +1,9 @@
 {
   "name": "netology",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "./src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "nodemon -L main.js"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +12,7 @@
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "multer": "^1.4.5-lts.1",
+    "request": "^2.88.2",
     "uuid": "^10.0.0"
   },
   "type": "module",

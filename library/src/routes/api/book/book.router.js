@@ -2,9 +2,10 @@ import express from "express"
 import { v4 as uuid } from "uuid"
 import path from "path"
 
-import storage from "../../../storage/storage.js"
-import { Book } from "../../../storage/storage.js"
+import { getStorage, addBook, Book, chanageStorage } from "../../../storage/storage.js"
 import file from "../../../middleware/file.js"
+
+import req from "request"
 
 const router = express.Router()
 
@@ -28,7 +29,7 @@ router.post("/create", file.single("fileBook"), (request, response) => {
     }
 
     const newBook = new Book(uuid(), title, description, authors, favorite, fileCover, fileName, path.basename(request.file.path))
-    storage.books.push(newBook)
+    addBook(newBook)
 
     response.redirect("/books/")
 })
@@ -37,6 +38,8 @@ router.post("/edit/:id", (request, response) => {
     const { id } = request.params
     const { title, description, authors, favorite, fileCover, fileName } = request.body
     
+    const storage = getStorage()
+
     const filePath = ""
     if (request.file) filePath = request.file.path
 
@@ -64,10 +67,14 @@ router.post("/edit/:id", (request, response) => {
         filePath || oldBook.fileBook
     )
 
+    chanageStorage(storage)
+
     response.redirect("/books/")
 })
 
 router.post("/delete/:id", (request, response) => {
+    const storage = getStorage()
+
     const { id } = request.params
     const index = storage.books.findIndex(b => b.id == id)
 
@@ -87,6 +94,8 @@ router.post("/delete/:id", (request, response) => {
 router.get("/download/:id", (request, response) => {
     const { id } = request.params
     const index = storage.books.findIndex(b => b.id == id)
+
+    const storage = getStorage()
 
     if (index == -1) {
         response.render("errors/404", {

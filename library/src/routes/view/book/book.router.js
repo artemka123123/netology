@@ -1,17 +1,18 @@
 import express from "express"
-import path from "path"
+import req from "request"
 
-import storage from "../../../storage/storage.js"
+import { getStorage } from "../../../storage/storage.js"
 
 const router = express.Router()
 
 router.get("/", (request, response) => {
 
+    const storage = getStorage()
+
     response.render("books/index", {
         title: "Книги",
         books: storage.books
     })
-
 })
 
 router.get("/create", (reqeust, response) => {
@@ -21,6 +22,8 @@ router.get("/create", (reqeust, response) => {
 })
 
 router.get("/view/:id", (request, response) => {
+    const storage = getStorage()
+
     const { id } = request.params
     const book = storage.books.find(b => b.id == id)
 
@@ -28,15 +31,24 @@ router.get("/view/:id", (request, response) => {
         response.render("errors/404")
 
         return
-    } 
+    }
 
-    response.render("books/view", {
-        title: book.title,
-        book: book
+    req.post(`http://172.18.0.1:3001/counter/${id}/increment`);
+    
+    req(`http://172.18.0.1:3001/counter/${id}`, (err, res, body) => {
+        const data = JSON.parse(body)
+
+        response.render("books/view", {
+            title: book.title,
+            book: book,
+            views: data.views
+        })
     })
 })
 
 router.get("/edit/:id", (request, response) => {
+    const storage = getStorage()
+
     const { id } = request.params
 
     const book = storage.books.find(b => b.id == id)
