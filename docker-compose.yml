@@ -5,10 +5,12 @@ services:
 
     volumes:
       - ./counter:/src
-      - data:/data/views
 
     ports:
       - 3001:3000
+
+    environment:
+      - DB_URL=mongodb+srv://admin:vmHs6gJbMsSmHm5z@testcluster.naqz3.mongodb.net/?retryWrites=true&w=majority&appName=TestCluster
 
     networks:
       - net
@@ -25,12 +27,19 @@ services:
 
     environment:
       - PORT=3000
+      - DB_URL=mongodb+srv://admin:vmHs6gJbMsSmHm5z@testcluster.naqz3.mongodb.net/?retryWrites=true&w=majority&appName=TestCluster
 
     networks:
       - net
 
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: vmHs6gJbMsSmHm5z
+
 volumes:
-  data: {}
   books: {}
 
 networks:

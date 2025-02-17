@@ -1,15 +1,16 @@
+import { Book } from "../../../database/models/book.model.js"
+
 import express from "express"
-import { v4 as uuid } from "uuid"
 import path from "path"
 
-import { getStorage, addBook, Book, chanageStorage } from "../../../storage/storage.js"
-import file from "../../../middleware/file.js"
+import { randomUUID } from "crypto"
 
-import req from "request"
+import file from "../../../middleware/file.js"
+import fs from "node:fs"
 
 const router = express.Router()
 
-router.post("/create", file.single("fileBook"), (request, response) => {
+router.post("/create", file.single("fileBook"), async (request, response) => {
     const { title, description, authors, favorite, fileCover, fileName } = request.body
 
     if (!request.file) {
@@ -28,25 +29,34 @@ router.post("/create", file.single("fileBook"), (request, response) => {
         return
     }
 
-    const newBook = new Book(uuid(), title, description, authors, favorite, fileCover, fileName, path.basename(request.file.path))
-    addBook(newBook)
+    const newBook = new Book({
+        id: randomUUID(),
+        title: title,
+        description: description,
+        authors: authors,
+        favorite: favorite,
+        fileCover: fileCover,
+        fileName: title,
+        views: 0
+    })
+
+    await newBook.save()
 
     response.redirect("/books/")
 })
 
-router.post("/edit/:id", (request, response) => {
+router.post("/edit/:id", async (request, response) => {
     const { id } = request.params
     const { title, description, authors, favorite, fileCover, fileName } = request.body
-    
-    const storage = getStorage()
 
     const filePath = ""
     if (request.file) filePath = request.file.path
 
-    const index = storage.books.findIndex(b => b.id == id)
+    const filter = {id: id}
 
+    const oldBook = await Book.findOne(filter)
 
-    if (index == -1) {
+    if (!oldBook) {
         response.render("errors/404", {
             title: "Книга не найдена!"
         })
@@ -54,50 +64,39 @@ router.post("/edit/:id", (request, response) => {
         return
     }
 
-    const oldBook = storage.books[index]
+    const update = {
+        $set: {
+            title: title || oldBook.title,
+            description: description || oldBook.description,
+            authors: authors || oldBook.authors,
+            favorite: favorite || oldBook.favorite,
+            fileCover: fileCover || oldBook.fileCover,
+            fileName: fileName || oldBook.fileName
+        }
+    }
 
-    storage.books[index] = new Book(
-        oldBook.id,
-        title || oldBook.title,
-        description || oldBook.description,
-        authors || oldBook.authors,
-        favorite || oldBook.favorite,
-        fileCover || oldBook.fileCover,
-        fileName || oldBook.fileName,
-        filePath || oldBook.fileBook
-    )
-
-    chanageStorage(storage)
+    await Book.updateOne({ "id": id }, update)
 
     response.redirect("/books/")
 })
 
-router.post("/delete/:id", (request, response) => {
-    const storage = getStorage()
-
+router.post("/delete/:id", async (request, response) => {
     const { id } = request.params
-    const index = storage.books.findIndex(b => b.id == id)
 
-    if (index == -1) {
-        response.render("errors/404", {
-            title: "Книга не"
-        })
+    const filter = { id: id }
 
-        return
-    }
-
-    storage.books.splice(index, 1)[0]
+    await Book.deleteOne(filter)
     
     response.redirect("/books/")
 })
 
-router.get("/download/:id", (request, response) => {
+router.get("/download/:id", async (request, response) => {
     const { id } = request.params
-    const index = storage.books.findIndex(b => b.id == id)
+    const filter = { id: id} 
 
-    const storage = getStorage()
+    const book = await Book.findOne(filter)
 
-    if (index == -1) {
+    if (!book) {
         response.render("errors/404", {
             title: "Книга не найдена!"
         })
@@ -105,9 +104,7 @@ router.get("/download/:id", (request, response) => {
         return
     }
 
-    const book = storage.books[index]
-
-    response.sendFile(path.resolve("public/books/", book.fileBook))
+    response.send(fs.readFileSync(path.resolve("/data/books/", `${book.fileName}.book`)))
 })
 
 export default router

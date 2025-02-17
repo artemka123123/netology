@@ -1,27 +1,34 @@
+import { Book } from "../database/models/book.model.js"
+
 import express from "express"
-import fs from "node:fs"
-import { getViews, addView } from "../storage/storage.js"
 
 const router = express.Router()
 
-router.get("/:id", (request, response) => {
+router.get("/:id", async (request, response) => {
     const { id } = request.params
-    const views = getViews(id)
+    const filter = { id: id }
+
+    const book = await Book.findOne(filter)
 
     response.json({
         "success": true,
-        "views": views.views
+        "views": book.views
     })
 })
 
-router.post("/:id/increment", (request, response) => {
+router.post("/:id/increment", async (request, response) => {
     const { id } = request.params
+    const filter = { id: id }
 
-    addView(id)
+    const oldBook = await Book.findOne(filter)
+
+    const update = { views: oldBook.views + 1 }
+
+    await Book.updateOne(filter, update)
 
     response.json({
         "success": true,
-        "views": getViews(id).views
+        "views": oldBook.views++
     })
 })
 

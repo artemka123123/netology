@@ -1,3 +1,5 @@
+import { connect } from "./database/database.js"
+
 import express from "express"
 const app = express()
 
@@ -8,6 +10,11 @@ import booksAPIRouter from "./routes/api/book/book.router.js"
 import userAPIRouter from "./routes/api/user/user.router.js"
 
 import error404 from "./middleware/error.js"
+
+const PORT = process.env.PORT || 3000
+const DB_URL = process.env.DB_URL
+
+connect(DB_URL)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -20,7 +27,5 @@ app.use("/user/api/", userAPIRouter)
 app.use("/books/api/", booksAPIRouter)
 
 app.use(error404)
-
-const PORT = process.env.PORT || 3000
 
 app.listen(PORT)

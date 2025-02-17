@@ -1,17 +1,17 @@
 import express from "express"
 import req from "request"
 
-import { getStorage } from "../../../storage/storage.js"
+import { Book } from "../../../database/models/book.model.js"
 
 const router = express.Router()
 
-router.get("/", (request, response) => {
+router.get("/", async (request, response) => {
 
-    const storage = getStorage()
+    const books = await Book.find({})
 
     response.render("books/index", {
         title: "Книги",
-        books: storage.books
+        books: books
     })
 })
 
@@ -21,11 +21,11 @@ router.get("/create", (reqeust, response) => {
     })
 })
 
-router.get("/view/:id", (request, response) => {
-    const storage = getStorage()
-
+router.get("/view/:id", async (request, response) => {
     const { id } = request.params
-    const book = storage.books.find(b => b.id == id)
+    const filter = { id: id }
+
+    const book = await Book.findOne(filter)
 
     if (!book) {
         response.render("errors/404")
@@ -46,14 +46,13 @@ router.get("/view/:id", (request, response) => {
     })
 })
 
-router.get("/edit/:id", (request, response) => {
-    const storage = getStorage()
-
+router.get("/edit/:id", async (request, response) => {
     const { id } = request.params
+    const filter = { id: id }
 
-    const book = storage.books.find(b => b.id == id)
+    const book = await Book.findOne(filter)
 
-    if (book == undefined) {
+    if (!book) {
         response.render("errors/404", {
             title: "Книга не найдена!"
         })

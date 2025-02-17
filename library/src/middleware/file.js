@@ -3,7 +3,7 @@ import multer from "multer"
 const storage = multer.diskStorage({
     destination(request, file, callback) {
 
-        callback(null, 'public/books')
+        callback(null, '/data/books')
 
     },
 
