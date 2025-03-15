@@ -4,7 +4,9 @@ export async function connect(url) {
 
     try {
 
-        mongoose.connect(url)
+            console.log(url)
+
+        await mongoose.connect(url, { dbName: "test" })
 
     } catch (err) { console.log(err) }
 
