@@ -1,0 +1,11 @@
+services:
+
+  main:
+    build: .
+
+    ports: 
+      - 3000:3000
+
+    environment:
+      - PORT=3000
+      - MONGO_URL=mongodb+srv://admin:iO38Tr9cKa6NVsZA@testcluster.naqz3.mongodb.net/?retryWrites=true&w=majority&appName=TestCluster

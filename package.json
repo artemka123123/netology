@@ -1,0 +1,19 @@
+{
+  "name": "portfolio-1",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "server": "node main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "mongoose": "^8.13.2",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "socket.io": "^4.8.1"
+  }
+}
