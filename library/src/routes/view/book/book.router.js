@@ -2,6 +2,8 @@ import express from "express"
 import req from "request"
 
 import { Book } from "../../../database/models/book.model.js"
+import { container } from "../../../inversify/inversify.config.js"
+import { BookRepository } from "../../../inversify/interfaces.js"
 
 const router = express.Router()
 
@@ -17,7 +19,7 @@ const getUserParams = (request) => {
 router.get("/", async (request, response) => {
     const { loggedIn, user } = getUserParams(request)
 
-    const books = await Book.find({})
+    const books = container.get(BookRepository).getBooks()
 
     response.render("books/index", {
         title: "Книги",
@@ -44,9 +46,8 @@ router.get("/view/:id", async (request, response) => {
     const { loggedIn, user } = getUserParams(request)
     
     const { id } = request.params
-    const filter = { id: id }
 
-    const book = await Book.findOne(filter)
+    const book = container.get(BookRepository).getBook(id)
 
     if (!book) {
         return response.render("errors/404", { loggedIn: loggedIn })
@@ -74,9 +75,7 @@ router.get("/edit/:id", async (request, response) => {
         return response.render("errors/404", { loggedIn: loggedIn })
 
     const { id } = request.params
-    const filter = { id: id }
-
-    const book = await Book.findOne(filter)
+    const book = container.get(BookRepository).getBook(id)
 
     if (!book) {
         response.render("errors/404", {

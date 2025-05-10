@@ -1,4 +1,3 @@
-import { Book } from "../../../database/models/book.model.js"
 
 import express from "express"
 import path from "path"
@@ -7,6 +6,8 @@ import { randomUUID } from "crypto"
 
 import file from "../../../middleware/file.js"
 import fs from "node:fs"
+import { container } from "../../../inversify/inversify.config.js"
+import { BookRepository, Book } from "../../../inversify/interfaces.js"
 
 const router = express.Router()
 
@@ -29,18 +30,16 @@ router.post("/create", file.single("fileBook"), async (request, response) => {
         return
     }
 
-    const newBook = new Book({
-        id: randomUUID(),
+    const newBook = {
         title: title,
         description: description,
         authors: authors,
         favorite: favorite,
         fileCover: fileCover,
-        fileName: title,
-        views: 0
-    })
+        fileName: fileName
+    }
 
-    await newBook.save()
+    container.get(BookRepository).createBook(newBook)
 
     response.redirect("/books/")
 })
@@ -52,9 +51,7 @@ router.post("/edit/:id", async (request, response) => {
     const filePath = ""
     if (request.file) filePath = request.file.path
 
-    const filter = {id: id}
-
-    const oldBook = await Book.findOne(filter)
+    const oldBook = container.get(BookRepository).getBook(id)
 
     if (!oldBook) {
         response.render("errors/404", {
@@ -83,18 +80,15 @@ router.post("/edit/:id", async (request, response) => {
 router.post("/delete/:id", async (request, response) => {
     const { id } = request.params
 
-    const filter = { id: id }
-
-    await Book.deleteOne(filter)
+    container.get(BookRepository).deleteBook(id)
     
     response.redirect("/books/")
 })
 
 router.get("/download/:id", async (request, response) => {
     const { id } = request.params
-    const filter = { id: id} 
 
-    const book = await Book.findOne(filter)
+    const book = container.get(BookRepository).getBook(id)
 
     if (!book) {
         response.render("errors/404", {
