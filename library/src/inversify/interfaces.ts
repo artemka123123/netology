@@ -13,9 +13,22 @@ export interface Book {
     views: number
 }
 
+export interface CreateBook {
+
+    title: string,
+    description: string,
+
+    authors: string[],
+    favorite: string,
+
+    fileCover: string,
+    fileName: string,
+
+}
+
 export abstract class BookRepository {
 
-    abstract createBook(book: Book): void;
+    abstract createBook(book: CreateBook): void;
 
     abstract getBook(id: number): Book | null;
     abstract getBooks(): Book[];

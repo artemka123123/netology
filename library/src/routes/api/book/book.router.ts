@@ -2,12 +2,11 @@
 import express from "express"
 import path from "path"
 
-import { randomUUID } from "crypto"
-
 import file from "../../../middleware/file.js"
 import fs from "node:fs"
 import { container } from "../../../inversify/inversify.config.js"
-import { BookRepository, Book } from "../../../inversify/interfaces.js"
+import { Book } from "../../../database/models/book.model.js"
+import { BookRepository } from "../../../inversify/interfaces.js"
 
 const router = express.Router()
 
@@ -48,7 +47,7 @@ router.post("/edit/:id", async (request, response) => {
     const { id } = request.params
     const { title, description, authors, favorite, fileCover, fileName } = request.body
 
-    const filePath = ""
+    var filePath = ""
     if (request.file) filePath = request.file.path
 
     const oldBook = container.get(BookRepository).getBook(id)
