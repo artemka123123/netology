@@ -9,22 +9,15 @@ export interface CreateBook {
     fileBook: string;
 }
 
-export interface GetBook {
+export interface UpdateBook {
 
-    success: boolean
-    error: string
+    title: string;
+    description: string;
+    authors: string[];
 
-    book: Book
-
-}
-
-export interface RemoveBook {
-
-    success: boolean,
-    error: string,
-
-    book: Book
-
+    fileCover: string;
+    fileBook: string;
+    
 }
 
 export interface Book {

@@ -1,6 +1,7 @@
-import { Controller, Delete, Get, Param, ParseArrayPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { BookService } from './book.service';
-import { CreateBook } from './types/book';
+import { CreateBook, UpdateBook } from './types/book';
+import { BookDocument } from './schemas/book.schema';
 
 
 @Controller("books")
@@ -11,23 +12,9 @@ export class BookController {
 
   @Post("create/")
   createBook(
-    @Query("title") title: string, 
-    @Query("description") description: string,
-    @Query("authors", new ParseArrayPipe({ items: String, separator: "," })) authors: string[],
-    @Query("fileCover") fileCover: string,
-    @Query("fileBook") fileBook: string
+    @Body() body: CreateBook): Promise<BookDocument> {
 
-  ) {
-
-    const createBook: CreateBook = {
-      title: title,
-      description: description,
-      authors: authors,
-      fileCover: fileCover,
-      fileBook: fileBook
-    }
-
-    return this.bookService.createBook(createBook);
+    return this.bookService.createBook(body);
   }
 
   @Get(":id/")
@@ -41,6 +28,13 @@ export class BookController {
   getBooks() {
 
     return this.bookService.getAllBooks();
+
+  }
+
+  @Put(":id/")
+  updateBook(@Param("id") id: string, @Body() body: UpdateBook) {
+
+    return this.bookService.updateBook(id, body)
 
   }
 
