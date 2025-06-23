@@ -54,33 +54,33 @@ export class RxjsService {
   private getGitlab(text: string, count: number): Observable<any> {
 
     return from(axios.get(`${this.gitlabURL}${text}`))
-      .pipe(map((res: any) => {
-        return res.data
-      }), mergeAll())
+      .pipe(map((res: any) => res.data), mergeAll())
       .pipe(map((res: any) => this.mapGitlabObject(res)))
       .pipe(take(count))
 
   }
 
   async searchRepositories(text: string, hub: string): Promise<any> {
+    var data = null;
 
-    if (hub === "github") {
-      const data$ = this.getGithub(text, 10).pipe(toArray());
-      
-      data$.subscribe(() => {});
+    switch (hub) {
 
-      return firstValueFrom(data$);
+      case "github": {
+        data = this.getGithub(text, 10).pipe(toArray())
+
+        break;
+      }
+
+      case "gitlab": {
+        data = this.getGitlab(text, 10).pipe(toArray());
+
+        break;
+      }
+
     }
 
-    if (hub == "gitlab") {
-
-      const data$ = this.getGitlab(text, 10).pipe(toArray());
-      
-      data$.subscribe(() => {});
-
-      return firstValueFrom(data$);
-
-    }
+    if (data != null)
+      return firstValueFrom(data);
 
     return new Promise((resolve) => {
 
@@ -91,5 +91,6 @@ export class RxjsService {
         }
       );
     })
+
   }
 }
