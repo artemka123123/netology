@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { ReservationsService } from "./reservation.service";
-import { Roles } from "src/auth/roles.decorator";
-import { JwtAuthGuard } from "src/auth/auth.guard";
-import { RoleGuard } from "src/auth/role.guard";
+import { Roles } from "src/auth/guards/role.guard";
+import { JwtAuthGuard } from "src/auth/guards/auth.guard";
+import { RoleGuard } from "src/auth/guards/role.guard";
 import { HotelsService } from "src/hotels/hotels.service";
 import { UsersService } from "src/users/users.service";
 import { HotelRoom } from "src/hotels/schemas/room.schema";
@@ -14,7 +14,7 @@ import { ObjectIdValidationPipe } from "src/validation/objectid.validation.pipe"
 
 
 
-@Controller("api")
+@Controller()
 export class ReservationController {
 
     constructor(

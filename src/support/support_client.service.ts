@@ -24,8 +24,6 @@ export class SupportRequestClientService implements ISupportRequestClientService
 
         const date = new Date();
 
-        const messageId = new mongoose.Types.ObjectId();
-
         const messages: Message[] = [{
             author: data.user,
             sentAt: date,
@@ -46,13 +44,12 @@ export class SupportRequestClientService implements ISupportRequestClientService
     async markMessagesAsRead(params: MarkMessagesAsReadDto) {
         
         const date = new Date();
-
         const request: SupportRequestDocument = await this.supportRequestModel.findOne({ _id: params.supportRequest })
 
         const observable = from(request.messages)
             .pipe(
                 filter((msg) => msg.sentAt <= date),
-                filter((msg) => msg.author != params.user),
+                filter((msg) => msg.author == params.user),
 
                 map((msg) => {
                     msg.readAt = date;

@@ -5,6 +5,8 @@ import { ID } from "src/types";
 export type MessageDocument = Message & Document
 
 export class Message {
+
+    _id?: ID;
     author: ID;
 
     sentAt: Date

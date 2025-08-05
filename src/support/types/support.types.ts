@@ -20,6 +20,15 @@ export interface MarkMessagesAsReadDto {
   createdBefore: Date;
 }
 
+export interface SearchRequestsParams {
+
+  user: ID,
+  limit: number,
+  offset: number,
+  isActive: boolean
+
+}
+
 export interface GetChatListParams {
   user: ID | null;
   isActive: boolean;
