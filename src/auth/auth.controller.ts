@@ -5,10 +5,10 @@ import { Response } from "express";
 import { UsersService } from "src/users/users.service";
 import { SignUpValidationSchema } from "src/users/validation/schemas/user.validation.schema";
 import { SchemaValidationPipe } from "src/users/validation/users.validation.pipe";
-import { JwtAuthGuard } from "./auth.guard";
+import { JwtAuthGuard } from "./guards/auth.guard";
 import { expression } from "joi";
 
-@Controller("api")
+@Controller()
 export class AuthController {
 
     constructor(

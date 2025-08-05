@@ -1,14 +1,14 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { JwtAuthGuard } from "src/auth/auth.guard";
-import { RoleGuard } from "src/auth/role.guard";
-import { Roles } from "src/auth/roles.decorator";
+import { JwtAuthGuard } from "src/auth/guards/auth.guard";
+import { RoleGuard } from "src/auth/guards/role.guard";
+import { Roles } from "src/auth/guards/role.guard";
 import { createHash, randomBytes } from "crypto";
 import { IntegerValidationPipe } from "src/validation/int.validation.pipe";
 import { EmailRegExp, PhoneRegExp, RegExpValidationPipe } from "src/validation/regexp.validation.pipe";
 import { firstValueFrom, from, map, toArray } from "rxjs";
 
-@Controller("api")
+@Controller()
 export class UsersController {
 
     constructor(private readonly usersService: UsersService) {}

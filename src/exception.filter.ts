@@ -1,4 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from "@nestjs/common";
+import { WsException } from "@nestjs/websockets";
 import { Response } from "express";
 
 
@@ -20,4 +21,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
                 code: status
             })
     }
+}
+
+@Catch(WsException)
+export class WsExceptionFilter implements ExceptionFilter {
+
+    async catch(exception: WsException, host: ArgumentsHost) {
+        const ctx = host.switchToWs();
+        const client = ctx.getClient();
+        const timestamp = new Date();
+
+        client.emit("error", {
+            timestamp: timestamp.toISOString(),
+            status: "error",
+            data: exception.message
+        })
+    }
+
 }

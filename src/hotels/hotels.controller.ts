@@ -6,13 +6,13 @@ import { filter, firstValueFrom, from, map, toArray } from "rxjs";
 import { HotelRoomsService } from "./hotelrooms.service";
 import { HotelRoom } from "./schemas/room.schema";
 import mongoose from "mongoose";
-import { RoleGuard } from "src/auth/role.guard";
-import { Roles } from "src/auth/roles.decorator";
-import { JwtAuthGuard } from "src/auth/auth.guard";
+import { RoleGuard } from "src/auth/guards/role.guard";
+import { Roles } from "src/auth/guards/role.guard";
+import { JwtAuthGuard } from "src/auth/guards/auth.guard";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { ObjectIdValidationPipe } from "src/validation/objectid.validation.pipe";
 
-@Controller("api/")
+@Controller()
 export class HotelsController {
 
     constructor(

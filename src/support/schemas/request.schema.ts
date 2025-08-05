@@ -7,6 +7,8 @@ export type SupportRequestDocument = SupportRequest & Document
 
 export class SupportRequest {
 
+    _id?: ID
+
     author: ID;
 
     sentAt: Date
